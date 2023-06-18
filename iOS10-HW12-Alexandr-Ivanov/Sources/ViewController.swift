@@ -14,14 +14,21 @@ class ViewController: UIViewController {
     private var isWorkTime = true
     private var isStarted = false
 
+    // MARK: - Timer
+
+    private var timer: Timer?
+    private var runCount = 0.0
+    private var duration: TimeInterval = 25
+
+
     // MARK: - UI Elements
 
     private lazy var timeLabel: UILabel = {
         let label = UILabel()
         label.text = "00:00"
-        label.font = UIFont.systemFont(ofSize: 50)
-        label.textColor = .systemGreen
-        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 60, weight: .thin)
+        label.textColor = .white
+        label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
 
         return label
@@ -30,11 +37,19 @@ class ViewController: UIViewController {
     private lazy var startStopButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
-        button.tintColor = .systemGreen
+        button.tintColor = .white
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
 
         return button
+    }()
+
+    private lazy var circularProgressBarView: CircularProgressBarView = {
+        let view = CircularProgressBarView()
+        view.createCircularPath()
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        return view
     }()
 
     // MARK: - Life Cycle
@@ -48,23 +63,26 @@ class ViewController: UIViewController {
 
     // MARK: - Setups
     private func setupView() {
-        view.backgroundColor = .blue
+        view.backgroundColor = .black
     }
 
     private func setupHierarchy() {
         view.addSubview(circularProgressBarView)
-        view.addSubview(startStopButton)
         view.addSubview(timeLabel)
+        view.addSubview(startStopButton)
     }
 
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            timeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            timeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
-            startStopButton.heightAnchor.constraint(equalToConstant: 40),
-            startStopButton.widthAnchor.constraint(equalToConstant: 40),
+            circularProgressBarView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            circularProgressBarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            timeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 1),
+            timeLabel.widthAnchor.constraint(equalToConstant: 156),
+            timeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            startStopButton.heightAnchor.constraint(equalToConstant: 45),
+            startStopButton.widthAnchor.constraint(equalToConstant: 45),
+            startStopButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: (((view.bounds.height / 2) + 60) / 2)),
             startStopButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            startStopButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
@@ -75,15 +93,15 @@ class ViewController: UIViewController {
 
         switch isStarted {
         case true:
-            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(update), userInfo: nil, repeats: true)
-            startStopButton.tintColor = .systemRed
+            circularProgressBarView.resumeAnimation()
+            timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+            startStopButton.tintColor = .systemOrange
             startStopButton.setBackgroundImage(UIImage(systemName: "pause"), for: .normal)
-            timeLabel.textColor = .systemRed
         default:
+            circularProgressBarView.pauseAnimation()
             timer?.invalidate()
-            startStopButton.tintColor = .systemGreen
+            startStopButton.tintColor = .white
             startStopButton.setBackgroundImage(UIImage(systemName: "play"), for: .normal)
-            timeLabel.textColor = .systemGreen
         }
     }
 
@@ -92,15 +110,20 @@ class ViewController: UIViewController {
         formatter.dateFormat = "mm:ss"
         let date = Date(timeIntervalSince1970: TimeInterval(runCount))
         timeLabel.text = formatter.string(from: date)
+        let rounded = round(runCount * pow(10, 2)) / pow(10, 2)
 
-        if runCount == 5 && isWorkTime {
+        if rounded == 25.0 && isWorkTime {
+            duration = 10
             isWorkTime.toggle()
-            runCount = -1
-        } else if runCount == 10 && !isWorkTime {
+            runCount = 0
+        } else if rounded == 10.0 && !isWorkTime {
+            duration = 25
             isWorkTime.toggle()
-            runCount = -1
+            runCount = 0
+        } else if rounded == 0.01 {
+            circularProgressBarView.progressAnimation(duration: duration)
         }
 
-        runCount += 1
+        runCount += 0.01
     }
 }
