@@ -46,7 +46,6 @@ class ViewController: UIViewController {
 
     private lazy var circularProgressBarView: CircularProgressBarView = {
         let view = CircularProgressBarView()
-        view.createCircularPath()
         view.translatesAutoresizingMaskIntoConstraints = false
 
         return view

@@ -16,13 +16,15 @@ class CircularProgressBarView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        createCircularPath()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        createCircularPath()
     }
 
-    func createCircularPath() {
+    private func createCircularPath() {
         let circularPath = UIBezierPath(arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0), radius: 120, startAngle: startPoint, endAngle: endPoint, clockwise: true)
         circleLayer.path = circularPath.cgPath
         circleLayer.fillColor = UIColor.clear.cgColor
