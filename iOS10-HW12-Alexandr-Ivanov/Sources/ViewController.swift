@@ -19,6 +19,8 @@ class ViewController: UIViewController {
     private var timer: Timer?
     private var runCount = 0.0
     private var duration: TimeInterval = 25
+    private var fromValue: CGFloat = 1
+    private var toValue: CGFloat = 0
 
 
     // MARK: - UI Elements
@@ -127,17 +129,21 @@ class ViewController: UIViewController {
         let rounded = round(runCount * pow(10, 2)) / pow(10, 2)
 
         if rounded == 25.0 && isWorkTime {
+            fromValue = 0
+            toValue = 1
             duration = 10
             isWorkTime.toggle()
             runCount = 0
             titleLabel.text = "REST"
         } else if rounded == 10.0 && !isWorkTime {
+            fromValue = 1
+            toValue = 0
             duration = 25
             isWorkTime.toggle()
             runCount = 0
             titleLabel.text = "WORK"
         } else if rounded == 0.01 {
-            circularProgressBarView.progressAnimation(duration: duration)
+            circularProgressBarView.progressAnimation(duration: duration, from: fromValue, to: toValue)
         }
 
         runCount += 0.01

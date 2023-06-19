@@ -39,7 +39,6 @@ class CircularProgressBarView: UIView {
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.lineCap = .round
         progressLayer.lineWidth = 8.0
-        progressLayer.strokeEnd = 1
         progressLayer.strokeColor = UIColor.systemOrange.cgColor
         layer.addSublayer(progressLayer)
     }
@@ -59,10 +58,11 @@ class CircularProgressBarView: UIView {
         progressLayer.beginTime = timeSincePause
     }
 
-    func progressAnimation(duration: TimeInterval) {
+    func progressAnimation(duration: TimeInterval, from: CGFloat, to: CGFloat) {
         let circularProgressAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        progressLayer.strokeEnd = from
         circularProgressAnimation.duration = duration
-        circularProgressAnimation.toValue = 0
+        circularProgressAnimation.toValue = to
         circularProgressAnimation.fillMode = .forwards
         circularProgressAnimation.isRemovedOnCompletion = false
         
