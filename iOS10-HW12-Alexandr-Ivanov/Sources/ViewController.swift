@@ -126,23 +126,23 @@ class ViewController: UIViewController {
         formatter.dateFormat = "mm:ss"
         let date = Date(timeIntervalSince1970: TimeInterval(runCount))
         timeLabel.text = formatter.string(from: date)
-        let rounded = round(runCount * pow(10, 2)) / pow(10, 2)
+        let rounded = round(runCount * pow(10, 1)) / pow(10, 1)
 
-        if rounded == 25.0 && isWorkTime {
+        if rounded == 25 && isWorkTime {
             fromValue = 0
             toValue = 1
             duration = 10
             isWorkTime.toggle()
             runCount = 0
             titleLabel.text = "REST"
-        } else if rounded == 10.0 && !isWorkTime {
+        } else if rounded == 10 && !isWorkTime {
             fromValue = 1
             toValue = 0
             duration = 25
             isWorkTime.toggle()
             runCount = 0
             titleLabel.text = "WORK"
-        } else if rounded == 0.01 {
+        } else if rounded == 0 {
             circularProgressBarView.progressAnimation(duration: duration, from: fromValue, to: toValue)
         }
 
