@@ -18,9 +18,11 @@ class ViewController: UIViewController {
 
     private var timer: Timer?
     private var runCount = 0.0
-    private var duration: TimeInterval = 25
+    private var duration = 25.0
     private var fromValue: CGFloat = 1
     private var toValue: CGFloat = 0
+    private var workingTime = 25.0
+    private var restTime = 10.0
 
 
     // MARK: - UI Elements
@@ -74,6 +76,7 @@ class ViewController: UIViewController {
     }
 
     // MARK: - Setups
+
     private func setupView() {
         view.backgroundColor = .black
     }
@@ -128,17 +131,17 @@ class ViewController: UIViewController {
         timeLabel.text = formatter.string(from: date)
         let rounded = round(runCount * pow(10, 1)) / pow(10, 1)
 
-        if rounded == 25 && isWorkTime {
+        if rounded == workingTime && isWorkTime {
             fromValue = 0
             toValue = 1
-            duration = 10
+            duration = restTime
             isWorkTime.toggle()
             runCount = 0
             titleLabel.text = "REST"
-        } else if rounded == 10 && !isWorkTime {
+        } else if rounded == restTime && !isWorkTime {
             fromValue = 1
             toValue = 0
-            duration = 25
+            duration = workingTime
             isWorkTime.toggle()
             runCount = 0
             titleLabel.text = "WORK"
