@@ -29,7 +29,7 @@ class ViewController: UIViewController {
 
     private lazy var timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "00:00"
+        label.text = "00"
         label.font = UIFont.monospacedDigitSystemFont(ofSize: 60, weight: .thin)
         label.textColor = .white
         label.textAlignment = .center
@@ -126,29 +126,30 @@ class ViewController: UIViewController {
 
     @objc private func update() {
         let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss"
-        let date = Date(timeIntervalSince1970: TimeInterval(runCount))
+        formatter.dateFormat = "ss"
+        let rounded = runCount.rounded(.up)
+        let date = Date(timeIntervalSince1970: TimeInterval(rounded))
         timeLabel.text = formatter.string(from: date)
-        let rounded = round(runCount * pow(10, 1)) / pow(10, 1)
 
-        if rounded == workingTime && isWorkTime {
-            fromValue = 0
-            toValue = 1
-            duration = restTime
-            isWorkTime.toggle()
-            runCount = 0
-            titleLabel.text = "REST"
-        } else if rounded == restTime && !isWorkTime {
-            fromValue = 1
-            toValue = 0
-            duration = workingTime
-            isWorkTime.toggle()
-            runCount = 0
-            titleLabel.text = "WORK"
-        } else if rounded == 0 {
+        if rounded == 0 {
+            switch isWorkTime {
+            case true:
+                isWorkTime.toggle()
+                fromValue = 1
+                toValue = 0
+                duration = workingTime
+                titleLabel.text = "WORK"
+                runCount = workingTime
+            case false:
+                isWorkTime.toggle()
+                fromValue = 0
+                toValue = 1
+                duration = restTime
+                titleLabel.text = "REST"
+                runCount = restTime
+            }
             circularProgressBarView.progressAnimation(duration: duration, from: fromValue, to: toValue)
         }
-
-        runCount += 0.01
+        runCount -= 0.01
     }
 }
