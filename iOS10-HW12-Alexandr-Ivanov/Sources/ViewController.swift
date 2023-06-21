@@ -28,7 +28,7 @@ class ViewController: UIViewController {
 
     private lazy var timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "00"
+        label.text = String(Int(duration))
         label.font = UIFont.monospacedDigitSystemFont(ofSize: 60, weight: .thin)
         label.textColor = .white
         label.textAlignment = .center
@@ -125,30 +125,32 @@ class ViewController: UIViewController {
 
     @objc private func update() {
         let formatter = DateFormatter()
-        formatter.dateFormat = "ss"
         let rounded = runCount.rounded(.up)
         let date = Date(timeIntervalSince1970: TimeInterval(rounded))
+
+        formatter.dateFormat = "ss"
         timeLabel.text = formatter.string(from: date)
 
-        if rounded == 0 {
-            switch isWorkTime {
-            case true:
-                isWorkTime.toggle()
-                fromValue = 1
-                toValue = 0
-                duration = workingTime
-                titleLabel.text = "WORK"
-                runCount = workingTime
-            case false:
-                isWorkTime.toggle()
-                fromValue = 0
-                toValue = 1
-                duration = restTime
-                titleLabel.text = "REST"
-                runCount = restTime
-            }
-            circularProgressBarView.progressAnimation(duration: duration, from: fromValue, to: toValue)
+        guard rounded == 0 else {
+            runCount -= 0.01
+            return
         }
-        runCount -= 0.01
+
+        if isWorkTime {
+            fromValue = 1
+            toValue = 0
+            duration = workingTime
+            titleLabel.text = "WORK"
+            runCount = workingTime
+        } else {
+            fromValue = 0
+            toValue = 1
+            duration = restTime
+            titleLabel.text = "REST"
+            runCount = restTime
+        }
+
+        isWorkTime.toggle()
+        circularProgressBarView.progressAnimation(duration: duration, from: fromValue, to: toValue)
     }
 }
