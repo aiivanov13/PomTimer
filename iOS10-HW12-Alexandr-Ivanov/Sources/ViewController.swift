@@ -24,7 +24,6 @@ class ViewController: UIViewController {
     private var workingTime = 25.0
     private var restTime = 10.0
 
-
     // MARK: - UI Elements
 
     private lazy var timeLabel: UILabel = {
